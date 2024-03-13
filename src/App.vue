@@ -13,7 +13,9 @@
       <div class="statistics" style="margin-top:10px;">
         <div>
           <a-button type="primary" @click="fetchRepos">Fetch Repos</a-button>
+          <a-button class="ml-20" type="primary" @click="fetchTraffic">Fetch Traffic</a-button>
           <a-checkbox class="ml-20" v-model:checked="useCacheChecked">Use Cache</a-checkbox>
+          <span>{{ status }}</span>
         </div>
         <div>
           <a-table :dataSource="dataSource" :columns="columns">
@@ -63,7 +65,7 @@ import { GitHubAPI } from './utils/GitHubAPI';
 import type { Repo } from './models/Repo';
 import type { RepoTraffic } from './models/RepoTraffic';
 const accountsManager = new AccountsManager();
-
+const status = ref("");
 const useCacheChecked = ref(true);
 const accounts = ref([] as Account[]);
 const repos = ref([] as Repo[]);
@@ -134,6 +136,7 @@ const deleteAccount = async (_account:Account) => {
 }
 
 const fetchRepos = async () => {
+  status.value = "Fetching...";
   const accountArray = accounts.value;
   const allRepos = [];
   for (let index = 0; index < accountArray.length; index++) {
@@ -147,6 +150,7 @@ const fetchRepos = async () => {
   }
   repos.value = allRepos;
   loadRepos();
+  status.value = "";
 }
 
 const loadRepos = () => {
@@ -164,7 +168,6 @@ const loadRepos = () => {
 }
 
 const fetchRepoTraffic = async (record:RepoTraffic)=> {
-  console.log(record);
   let account;
   for (let index = 0; index < accounts.value.length; index++) {
     const element = accounts.value[index];
@@ -182,6 +185,16 @@ const fetchRepoTraffic = async (record:RepoTraffic)=> {
     record.uniquePageViews = traffic.uniquePageViews;
     record.referrers = traffic.referrers;
   }
+}
+
+const fetchTraffic = async () => {
+  status.value = "Fetching...";
+  for (let index = 0; index < dataSource.value.length; index++) {
+    const record = dataSource.value[index];
+    await fetchRepoTraffic(record)
+    status.value = (index + 1) + "/" + dataSource.value.length;
+  }
+  status.value = "";
 }
 
 </script>
