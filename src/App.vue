@@ -31,7 +31,7 @@
 
           <template #bodyCell="{ column, record }">
             <template v-if="column.key === 'action'">
-              <a-button type="primary" @click="fetchRepoTraffic(record)">Fetch Data</a-button>
+              <a-button type="link" @click="fetchRepoTraffic(record)">Fetch Data</a-button>
             </template>
             <template v-if="column.key === 'referrer'">
               <div class="referrer">
