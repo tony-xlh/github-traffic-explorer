@@ -85,21 +85,25 @@ const columns = [
     name: 'Page Views',
     dataIndex: 'pageViews',
     key: 'pageViews',
+    sorter: (a: RepoTraffic, b: RepoTraffic) => a.pageViews - b.pageViews,
   },
   {
     name: 'Unique Page Views',
     dataIndex: 'uniquePageViews',
     key: 'uniquePageViews',
+    sorter: (a: RepoTraffic, b: RepoTraffic) => a.uniquePageViews - b.uniquePageViews,
   },
   {
     name: 'Clones',
     dataIndex: 'clones',
     key: 'clones',
+    sorter: (a: RepoTraffic, b: RepoTraffic) => a.clones - b.clones,
   },
   {
     name: 'Unique Clones',
     dataIndex: 'uniqueClones',
     key: 'uniqueClones',
+    sorter: (a: RepoTraffic, b: RepoTraffic) => a.uniqueClones - b.uniqueClones,
   },
   {
     name: 'Referrer',
