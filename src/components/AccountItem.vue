@@ -39,6 +39,6 @@ const deleteClicked = () => {
 }
 input {
   min-width: 100px;
-  max-width: 150px;
+  max-width: 120px;
 }
 </style>
