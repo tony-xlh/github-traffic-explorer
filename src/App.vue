@@ -19,13 +19,11 @@
             <template #headerCell="{ column }">
             <template v-if="column.key === 'action'">
               <span>
-                <smile-outlined />
                 Action
               </span>
             </template>
             <template v-else>
               <span>
-                <smile-outlined />
                 {{column.name}}
               </span>
             </template>
@@ -33,9 +31,15 @@
 
           <template #bodyCell="{ column, record }">
             <template v-if="column.key === 'action'">
-              <span>
-                loading...
-              </span>
+              <a-button type="primary" @click="fetchRepoTraffic(record)">Fetch Data</a-button>
+            </template>
+            <template v-if="column.key === 'referrer'">
+              <div class="referrer">
+                <div v-for="referrer in record['referrers']">
+                  <div>{{ referrer.name }}</div>
+                  <div>{{ "Count: "+referrer.views+" Unique:"+referrer.uniqueViews }}</div>
+                </div>
+              </div>
             </template>
             <template v-else>
               <a>
@@ -94,9 +98,9 @@ const columns = [
     key: 'uniqueClones',
   },
   {
-    name: 'Referring',
-    dataIndex: 'referring',
-    key: 'referring',
+    name: 'Referrer',
+    dataIndex: 'referrer',
+    key: 'referrer',
   },
   {
     title: 'Action',
@@ -157,6 +161,27 @@ const loadRepos = () => {
   dataSource.value = allRepoTraffic;
 }
 
+const fetchRepoTraffic = async (record:RepoTraffic)=> {
+  console.log(record);
+  let account;
+  for (let index = 0; index < accounts.value.length; index++) {
+    const element = accounts.value[index];
+    if (element.name === record.owner) {
+      account = element;
+    }
+  }
+  if (account) {
+    const api = new GitHubAPI(account);
+    let traffic = await api.fetchTraffic(record);
+    console.log(traffic);
+    record.clones = traffic.clones;
+    record.uniqueClones = traffic.uniqueClones;
+    record.pageViews = traffic.pageViews;
+    record.uniquePageViews = traffic.uniquePageViews;
+    record.referrers = traffic.referrers;
+  }
+}
+
 </script>
 <style scoped>
 .container {
@@ -164,5 +189,10 @@ const loadRepos = () => {
 }
 header {
   padding:5px;
+}
+
+.referrer {
+  max-height: 50px;
+  overflow: auto;
 }
 </style>

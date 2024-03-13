@@ -1,4 +1,4 @@
-import type { Referring } from "./Referring";
+import type { Referrer } from "./Referrer";
 import type { Repo } from "./Repo";
 
 export interface RepoTraffic extends Repo{
@@ -6,5 +6,6 @@ export interface RepoTraffic extends Repo{
   uniquePageViews?:number;
   clones?:number;
   uniqueClones?:number;
-  referrings?:Referring[];
+  referrers?:Referrer[];
+  date?:string;
 }
