@@ -7,7 +7,7 @@ export class AccountsManager {
       name: "accounts"
     });
   }
-  async loadAccounts():Promise<Account[]> {
+  async loadItems():Promise<Account[]> {
     let accounts:Account[] = [];
     let keys = await this.store.keys();
     for (let index = 0; index < keys.length; index++) {
@@ -20,21 +20,21 @@ export class AccountsManager {
     return accounts;
   }
 
-  async deleteAccount(key:string) {
+  async deleteItem(key:string) {
     await this.store.removeItem(key)
   }
 
-  async setAccount(key:string,account:Account) {
+  async setItem(key:string,account:Account) {
     await this.store.setItem(key,JSON.stringify(account))
   }
 
   async clear(){
     await this.store.clear();
   }
-  async setAccounts(accounts:Account[]) {
+  async setItems(accounts:Account[]) {
     for (let index = 0; index < accounts.length; index++) {
       const account = accounts[index];
-      await this.setAccount(account.name,account);
+      await this.setItem(account.name,account);
     }
   }
 }

@@ -105,7 +105,7 @@ const columns = [
 ];
 
 onMounted(async () => {
-  const accountArray = await accountsManager.loadAccounts();
+  const accountArray = await accountsManager.loadItems();
   if (accountArray.length === 0 ) {
     accountArray.push({name:"",type:"user",token:""});
   }
@@ -115,7 +115,7 @@ onMounted(async () => {
 const accountChanged = async (_account:Account) => {
   console.log("accountChanged");
   await accountsManager.clear()
-  await accountsManager.setAccounts(accounts.value);
+  await accountsManager.setItems(accounts.value);
 }
 
 const newAccount = () => {
@@ -123,8 +123,8 @@ const newAccount = () => {
 }
 
 const deleteAccount = async (_account:Account) => {
-  await accountsManager.deleteAccount(_account.name)
-  accounts.value = await accountsManager.loadAccounts();
+  await accountsManager.deleteItem(_account.name)
+  accounts.value = await accountsManager.loadItems();
 }
 
 const fetchRepos = async () => {
