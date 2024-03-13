@@ -13,6 +13,7 @@
       <div class="statistics" style="margin-top:10px;">
         <div>
           <a-button type="primary" @click="fetchRepos">Fetch Repos</a-button>
+          <a-checkbox class="ml-20" v-model:checked="useCacheChecked">Use Cache</a-checkbox>
         </div>
         <div>
           <a-table :dataSource="dataSource" :columns="columns">
@@ -63,6 +64,7 @@ import type { Repo } from './models/Repo';
 import type { RepoTraffic } from './models/RepoTraffic';
 const accountsManager = new AccountsManager();
 
+const useCacheChecked = ref(true);
 const accounts = ref([] as Account[]);
 const repos = ref([] as Repo[]);
 const dataSource = ref([] as RepoTraffic[]);
@@ -136,7 +138,7 @@ const fetchRepos = async () => {
   const allRepos = [];
   for (let index = 0; index < accountArray.length; index++) {
     const account = accountArray[index];
-    const api = new GitHubAPI(account);
+    const api = new GitHubAPI(account,useCacheChecked.value);
     const reposArray = await api.listRepos();
     for (let index = 0; index < reposArray.length; index++) {
       const repo = reposArray[index];
@@ -171,7 +173,7 @@ const fetchRepoTraffic = async (record:RepoTraffic)=> {
     }
   }
   if (account) {
-    const api = new GitHubAPI(account);
+    const api = new GitHubAPI(account,useCacheChecked.value);
     let traffic = await api.fetchTraffic(record);
     console.log(traffic);
     record.clones = traffic.clones;

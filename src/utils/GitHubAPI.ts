@@ -2,20 +2,28 @@ import type { Account } from "@/models/Account";
 import type { Referrer } from "@/models/Referrer";
 import type { Repo } from "@/models/Repo";
 import type { RepoTraffic } from "@/models/RepoTraffic";
-
+import localforage from "localforage";
 export class GitHubAPI {
   private account:Account;
   private headers;
-  constructor(account:Account) {
+  private useCache = false;
+  constructor(account:Account,useCache:boolean) {
     this.account = account;
     this.headers = new Headers();
     this.headers.append("Accept", "application/vnd.github+json");
     this.headers.append("Authorization", "Bearer "+this.account.token);
     this.headers.append("X-GitHub-Api-Version", "2022-11-28");
+    this.useCache = useCache;
   }
 
   async listRepos(){
     let repos:Repo[] = [];
+    if (this.useCache) {
+      let cached = await this.loadReposFromCache();
+      if (cached) {
+        return cached;
+      }
+    }
     let merged = [];
     let page = 1;
     let fetched = await this.fetchRepos(page,100);
@@ -37,7 +45,20 @@ export class GitHubAPI {
       const item = merged[index];
       repos.push({name:item["name"],owner:this.account.name});
     }
+    await this.saveReposToCache(repos);
     return repos;
+  }
+
+  async loadReposFromCache():Promise<undefined|Repo[]>{
+    let repos = await localforage.getItem("repos");
+    if (repos) {
+      return JSON.parse(repos as string);
+    }
+    return undefined;
+  }
+
+  async saveReposToCache(repos:Repo[]){
+    await localforage.setItem("repos",JSON.stringify(repos));
   }
 
   async fetchRepos(page:number,pageSize:number):Promise<any[]>{
@@ -63,6 +84,12 @@ export class GitHubAPI {
     let repoTraffic:RepoTraffic = {
       name:repo.name,
       owner:repo.owner
+    }
+    if (this.useCache) {
+      let traffic = await this.loadTrafficFromCache(repoTraffic);
+      if (traffic) {
+        return traffic;
+      }
     }
     const clonesURL = "https://api.github.com/repos/"+repo.owner+"/"+repo.name+"/traffic/clones";
     const viewsURL = "https://api.github.com/repos/"+repo.owner+"/"+repo.name+"/traffic/views";
@@ -108,6 +135,19 @@ export class GitHubAPI {
       referrers.push(referrer);
     }
     repoTraffic.referrers = referrers;
+    await this.saveTrafficToCache(repoTraffic)
     return repoTraffic;
+  }
+
+  async saveTrafficToCache(traffic:RepoTraffic){
+    await localforage.setItem(traffic.owner+"-"+traffic.name,JSON.stringify(traffic));
+  }
+
+  async loadTrafficFromCache(repo:Repo):Promise<RepoTraffic | undefined>{
+    let traffic = await localforage.getItem(repo.owner+"-"+repo.name);
+    if (traffic) {
+      return JSON.parse(traffic as string);
+    }
+    return undefined;
   }
 }
