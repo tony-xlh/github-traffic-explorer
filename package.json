@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "ant-design-vue": "^4.1.2",
+    "localforage": "^1.10.0",
     "vue": "^3.4.21"
   },
   "devDependencies": {
