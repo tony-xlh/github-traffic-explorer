@@ -17,6 +17,26 @@
           <a-checkbox class="ml-20" v-model:checked="useCacheChecked">Use Cache</a-checkbox>
           <span>{{ status }}</span>
         </div>
+        <div class="actions">
+          <a-dropdown class="ml-20">
+            <template #overlay>
+              <a-menu @click="handleMenuClick">
+                <a-menu-item key="1">
+                  Download as CSV
+                </a-menu-item>
+                <a-menu-item key="2">
+                  Export data
+                </a-menu-item>
+                <a-menu-item key="3">
+                  Import data
+                </a-menu-item>
+              </a-menu>
+            </template>
+            <a-button>
+              Action
+            </a-button>
+          </a-dropdown>
+        </div>
         <div>
           <a-table :dataSource="dataSource" :columns="columns">
             <template #headerCell="{ column }">
@@ -64,6 +84,7 @@ import { AccountsManager } from './utils/AccountsManager';
 import { GitHubAPI } from './utils/GitHubAPI';
 import type { Repo } from './models/Repo';
 import type { RepoTraffic } from './models/RepoTraffic';
+import type { MenuProps } from 'ant-design-vue';
 const accountsManager = new AccountsManager();
 const status = ref("");
 const useCacheChecked = ref(true);
@@ -85,25 +106,25 @@ const columns = [
     name: 'Page Views',
     dataIndex: 'pageViews',
     key: 'pageViews',
-    sorter: (a: RepoTraffic, b: RepoTraffic) => a.pageViews - b.pageViews,
+    sorter: (a: RepoTraffic, b: RepoTraffic) => a.pageViews! - b.pageViews!,
   },
   {
     name: 'Unique Page Views',
     dataIndex: 'uniquePageViews',
     key: 'uniquePageViews',
-    sorter: (a: RepoTraffic, b: RepoTraffic) => a.uniquePageViews - b.uniquePageViews,
+    sorter: (a: RepoTraffic, b: RepoTraffic) => a.uniquePageViews! - b.uniquePageViews!,
   },
   {
     name: 'Clones',
     dataIndex: 'clones',
     key: 'clones',
-    sorter: (a: RepoTraffic, b: RepoTraffic) => a.clones - b.clones,
+    sorter: (a: RepoTraffic, b: RepoTraffic) => a.clones! - b.clones!,
   },
   {
     name: 'Unique Clones',
     dataIndex: 'uniqueClones',
     key: 'uniqueClones',
-    sorter: (a: RepoTraffic, b: RepoTraffic) => a.uniqueClones - b.uniqueClones,
+    sorter: (a: RepoTraffic, b: RepoTraffic) => a.uniqueClones! - b.uniqueClones!,
   },
   {
     name: 'Referrer',
@@ -201,6 +222,10 @@ const fetchTraffic = async () => {
   status.value = "";
 }
 
+const handleMenuClick: MenuProps['onClick'] = e => {
+  console.log('click', e);
+};
+
 </script>
 <style scoped>
 .container {
@@ -213,5 +238,11 @@ header {
 .referrer {
   max-height: 50px;
   overflow: auto;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 }
 </style>
