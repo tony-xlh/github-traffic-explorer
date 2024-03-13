@@ -85,6 +85,7 @@ import { GitHubAPI } from './utils/GitHubAPI';
 import type { Repo } from './models/Repo';
 import type { RepoTraffic } from './models/RepoTraffic';
 import type { MenuProps } from 'ant-design-vue';
+import { exportData } from './utils/Helpers';
 const accountsManager = new AccountsManager();
 const status = ref("");
 const useCacheChecked = ref(true);
@@ -224,6 +225,7 @@ const fetchTraffic = async () => {
 
 const handleMenuClick: MenuProps['onClick'] = e => {
   console.log('click', e);
+  exportData()
 };
 
 </script>
