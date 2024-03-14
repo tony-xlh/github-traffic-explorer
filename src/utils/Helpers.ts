@@ -9,8 +9,26 @@ export interface ExchangeData{
   repos:Repo[];
   traffics:RepoTraffic[];
 }
-export function exportAsCSV(repoTraffic:RepoTraffic) {
-
+export function exportAsCSV(repoTraffics:RepoTraffic[]) {
+  let separator = ",";
+  let csv = [];
+  let headRow = ["Name","Owner","Page Views","Unique Page Views","Clones","Unique Clones","Referrers"];
+  csv.push(headRow);
+  for (let i = 0; i < repoTraffics.length; i++) {
+    let row = [];
+    let traffic = repoTraffics[i];
+    traffic.clones
+    row.push(traffic.name);
+    row.push(traffic.owner);
+    row.push(traffic.pageViews);
+    row.push(traffic.uniquePageViews);
+    row.push(traffic.clones);
+    row.push(traffic.uniqueClones);
+    row.push(JSON.stringify(traffic.referrers));
+    csv.push(row.join(separator));
+  }
+  let csv_string = csv.join('\n');
+  downloadAsTxt(csv_string,"out.csv");
 }
 
 export async function exportData() {
@@ -35,7 +53,7 @@ export async function exportData() {
     repos:repos,
     traffics:traffics
   };
-  downloadAsTxt(JSON.stringify(data));
+  downloadAsTxt(JSON.stringify(data),"out.txt");
 }
 
 export async function importData(data:ExchangeData) {
@@ -51,8 +69,7 @@ export async function importData(data:ExchangeData) {
   }
 }
 
-export function downloadAsTxt(text:string){
-  let filename = 'out.txt';
+export function downloadAsTxt(text:string,filename:string){
   let link = document.createElement('a');
   link.style.display = 'none';
   link.setAttribute('target', '_blank');
