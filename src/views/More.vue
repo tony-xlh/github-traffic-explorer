@@ -1,37 +1,49 @@
 <template>
   <div class="container">
     <h2>More Details</h2>
-    <a-table :dataSource="dataSource" :columns="columns">
-      <template #headerCell="{ column }">
-      <template v-if="column.key">
-        <span>
-          {{column.name}}
-        </span>
-      </template>
-    </template>
+    <div>
+      <h3>Referring Sites</h3>
+      <a-table :dataSource="dataSource" :columns="columns">
+        <template #headerCell="{ column }">
+          <template v-if="column.key">
+            <span>
+              {{column.name}}
+            </span>
+          </template>
+        </template>
 
-    <template #bodyCell="{ column, record }">
-      <template v-if="column.key === 'repos'">
-        <div class="repos">
-          <ol>
-            <li v-for="repo in record['repos']">
-              {{ repo }}
-            </li>
-          </ol>
-        </div>
-      </template>
-      <template v-else>
-        <span>
-          {{ console.log(record) }}
-          {{ record[column.key] }}
-        </span>
-      </template>
-    </template>
-    </a-table>
+        <template #bodyCell="{ column, record }">
+          <template v-if="column.key === 'repos'">
+            <div class="repos">
+              <ol>
+                <li v-for="repo in record['repos']">
+                  {{ repo }}
+                </li>
+              </ol>
+            </div>
+          </template>
+          <template v-else>
+            <span>
+              {{ console.log(record) }}
+              {{ record[column.key] }}
+            </span>
+          </template>
+        </template>
+      </a-table>
+    </div>
+    <div>
+      <h3>Repos not Having Referrers</h3>
+      <ol>
+        <li v-for="repo in reposNotHavingReferrers">
+          {{ repo.owner + "/" + repo.name }}
+        </li>
+      </ol>
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
 import type { ReferrerDetails } from '@/models/ReferrerDetails';
+import type { Repo } from '@/models/Repo';
 import type { RepoTraffic } from '@/models/RepoTraffic';
 import { AccountsManager } from '@/utils/AccountsManager';
 import { GitHubAPI } from '@/utils/GitHubAPI';
@@ -61,12 +73,14 @@ const columns = [
   }
 ];
 const dataSource = ref([] as ReferrerDetails[]);
+const reposNotHavingReferrers = ref([] as Repo[]);
 const calculateDataSource = async () => {
   const details:ReferrerDetails[] = [];
   const dataDict:any = {};
   const accountsManager = new AccountsManager();
   const accountArray = await accountsManager.loadItems();
   const allRepos:RepoTraffic[] = [];
+  const allReposNotHavingReferrers:Repo[] = [];
   for (let index = 0; index < accountArray.length; index++) {
     const account = accountArray[index];
     const api = new GitHubAPI(account,true);
@@ -80,6 +94,9 @@ const calculateDataSource = async () => {
   for (let index = 0; index < allRepos.length; index++) {
     const repo = allRepos[index];
     if (repo.referrers) {
+      if (repo.referrers.length === 0) {
+        allReposNotHavingReferrers.push(repo);
+      }
       for (let j = 0; j < repo.referrers.length; j++) {
         const referrer = repo.referrers[j];
         let views = referrer.views;
@@ -107,6 +124,7 @@ const calculateDataSource = async () => {
       repos:dataDict[name].repos
     });
   }
+  reposNotHavingReferrers.value = allReposNotHavingReferrers;
   dataSource.value = details;
 }
 onMounted(async () => {
