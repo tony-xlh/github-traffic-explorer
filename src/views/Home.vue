@@ -255,6 +255,7 @@ const handleMenuClick: MenuProps['onClick'] = e => {
     fileInput.click();
   }else{
     window.location.hash = "#more";
+    window.scrollTo(0,0);
   }
 };
 
