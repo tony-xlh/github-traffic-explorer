@@ -9,6 +9,7 @@ export interface ExchangeData{
   repos:Repo[];
   traffics:RepoTraffic[];
 }
+
 export function exportAsCSV(repoTraffics:RepoTraffic[]) {
   let separator = ",";
   let csv = [];
