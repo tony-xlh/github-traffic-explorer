@@ -34,10 +34,15 @@ export function exportAsCSV(repoTraffics:RepoTraffic[]) {
 
 export async function exportData() {
   const accountsManager = new AccountsManager();
-  let storedRepos = await localforage.getItem("repos");
+  let accounts = await accountsManager.loadItems();
   let repos:Repo[] = [];
-  if (storedRepos) {
-    repos = JSON.parse(storedRepos as string);
+  for (let index = 0; index < accounts.length; index++) {
+    const account = accounts[index];
+    let storedRepos = await localforage.getItem(account.name+"-repos");
+    if (storedRepos) {
+      let reposOfOneAccount = JSON.parse(storedRepos as string);
+      repos = repos.concat(reposOfOneAccount);
+    }
   }
   let traffics:RepoTraffic[] = [];
   for (let index = 0; index < repos.length; index++) {
@@ -48,7 +53,7 @@ export async function exportData() {
       traffics.push(traffic);
     }
   }
-  let accounts = await accountsManager.loadItems();
+  
   let data:ExchangeData = {
     accounts:accounts,
     repos:repos,
