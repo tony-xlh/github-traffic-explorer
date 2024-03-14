@@ -269,7 +269,7 @@ header {
 }
 
 .referrer {
-  max-height: 50px;
+  max-height: 100px;
   overflow: auto;
 }
 
