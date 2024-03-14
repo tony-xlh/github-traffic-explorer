@@ -18,6 +18,7 @@
           <span>{{ status }}</span>
         </div>
         <div class="actions">
+        <input style="display:none" type="file" id="fileInput"/>
           <a-dropdown class="ml-20">
             <template #overlay>
               <a-menu @click="handleMenuClick">
@@ -85,7 +86,7 @@ import { GitHubAPI } from './utils/GitHubAPI';
 import type { Repo } from './models/Repo';
 import type { RepoTraffic } from './models/RepoTraffic';
 import type { MenuProps } from 'ant-design-vue';
-import { exportData } from './utils/Helpers';
+import { exportData, importData, type ExchangeData } from './utils/Helpers';
 const accountsManager = new AccountsManager();
 const status = ref("");
 const useCacheChecked = ref(true);
@@ -204,7 +205,6 @@ const fetchRepoTraffic = async (record:RepoTraffic)=> {
   if (account) {
     const api = new GitHubAPI(account,useCacheChecked.value);
     let traffic = await api.fetchTraffic(record);
-    console.log(traffic);
     record.clones = traffic.clones;
     record.uniqueClones = traffic.uniqueClones;
     record.pageViews = traffic.pageViews;
@@ -225,7 +225,32 @@ const fetchTraffic = async () => {
 
 const handleMenuClick: MenuProps['onClick'] = e => {
   console.log('click', e);
-  exportData()
+  if (e.key === "1") {
+
+  }else if (e.key === "2"){
+    exportData()
+  }else{
+    let fileInput = document.getElementById("fileInput") as HTMLInputElement;
+    fileInput.onchange = function(){
+      let files = fileInput.files;
+      console.log(files);
+      if (files && files?.length>0) {
+        let file = files[0];
+        console.log(file)
+        let fileReader = new FileReader();
+        fileReader.onload = function(e){
+          if (e.target) {
+            status.value = "Importing...";
+            importData(JSON.parse(e.target.result as string) as ExchangeData);
+            status.value = "";
+            location.reload();
+          }
+        };
+        fileReader.readAsText(file);
+      }
+    }
+    fileInput.click();
+  }
 };
 
 </script>
