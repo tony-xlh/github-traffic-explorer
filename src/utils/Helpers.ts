@@ -3,6 +3,7 @@ import { AccountsManager } from "./AccountsManager";
 import localforage from "localforage";
 import type { Repo } from "@/models/Repo";
 import type { Account } from "@/models/Account";
+import type { ReferrerDetails } from "@/models/ReferrerDetails";
 
 export interface ExchangeData{
   accounts:Account[];
@@ -18,7 +19,6 @@ export function exportAsCSV(repoTraffics:RepoTraffic[]) {
   for (let i = 0; i < repoTraffics.length; i++) {
     let row = [];
     let traffic = repoTraffics[i];
-    traffic.clones
     row.push(traffic.name);
     row.push(traffic.owner);
     row.push(traffic.pageViews);
@@ -29,7 +29,27 @@ export function exportAsCSV(repoTraffics:RepoTraffic[]) {
     csv.push(row.join(separator));
   }
   let csv_string = csv.join('\n');
-  downloadAsTxt(csv_string,"out.csv");
+  let date = new Date();
+  let filename = date.getFullYear() + (date.getMonth()+1).toString().padStart(2,"0") + date.getDate().toString().padStart(2,"0") + ".csv";
+  downloadAsTxt(csv_string,filename);
+}
+
+export function exportReferringDetailsAsCSV(details:ReferrerDetails[]) {
+  let separator = ",";
+  let csv = [];
+  let headRow = ["Name","Views","Unique Views","Repos"];
+  csv.push(headRow);
+  for (let i = 0; i < details.length; i++) {
+    let row = [];
+    let item = details[i];
+    row.push(item.name);
+    row.push(item.views);
+    row.push(item.uniqueViews);
+    row.push(JSON.stringify(item.repos));
+    csv.push(row.join(separator));
+  }
+  let csv_string = csv.join('\n');
+  downloadAsTxt(csv_string,"details.csv");
 }
 
 export async function exportData() {

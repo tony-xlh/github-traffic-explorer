@@ -31,6 +31,9 @@
           </template>
         </template>
       </a-table>
+      <div style="padding:10px;">
+        <a-button type="primary" @click="download()">Export to CSV</a-button>
+      </div>
     </div>
     <div>
       <h3>Repos not Having Referrers</h3>
@@ -48,6 +51,7 @@ import type { Repo } from '@/models/Repo';
 import type { RepoTraffic } from '@/models/RepoTraffic';
 import { AccountsManager } from '@/utils/AccountsManager';
 import { GitHubAPI } from '@/utils/GitHubAPI';
+import { exportReferringDetailsAsCSV } from '@/utils/Helpers';
 import { onMounted, ref } from 'vue';
 const columns = [
   {
@@ -128,6 +132,11 @@ const calculateDataSource = async () => {
   reposNotHavingReferrers.value = allReposNotHavingReferrers;
   dataSource.value = details;
 }
+
+const download = () => {
+  exportReferringDetailsAsCSV(dataSource.value);
+}
+
 onMounted(async () => {
   calculateDataSource();
 });
