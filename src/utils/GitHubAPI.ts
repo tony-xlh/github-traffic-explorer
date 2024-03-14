@@ -50,7 +50,7 @@ export class GitHubAPI {
   }
 
   async loadReposFromCache():Promise<undefined|Repo[]>{
-    let repos = await localforage.getItem(this.account.name+"-repos");
+    let repos = await localforage.getItem(this.account.name+"--repos");
     if (repos) {
       return JSON.parse(repos as string);
     }
@@ -58,7 +58,7 @@ export class GitHubAPI {
   }
 
   async saveReposToCache(repos:Repo[]){
-    await localforage.setItem(this.account.name+"-repos",JSON.stringify(repos));
+    await localforage.setItem(this.account.name+"--repos",JSON.stringify(repos));
   }
 
   async fetchRepos(page:number,pageSize:number):Promise<any[]>{

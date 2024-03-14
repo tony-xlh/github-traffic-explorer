@@ -38,7 +38,7 @@ export async function exportData() {
   let repos:Repo[] = [];
   for (let index = 0; index < accounts.length; index++) {
     const account = accounts[index];
-    let storedRepos = await localforage.getItem(account.name+"-repos");
+    let storedRepos = await localforage.getItem(account.name+"--repos");
     if (storedRepos) {
       let reposOfOneAccount = JSON.parse(storedRepos as string);
       repos = repos.concat(reposOfOneAccount);
@@ -70,7 +70,7 @@ export async function importData(data:ExchangeData) {
   accountsManager.setItems(data.accounts);
   const repos:Repo[] = data.repos;
   const traffics:RepoTraffic[] = data.traffics;
-  
+
   for (let index = 0; index < data.accounts.length; index++) {
     const account = data.accounts[index];
     const reposOfOneAccount = [];
@@ -80,7 +80,7 @@ export async function importData(data:ExchangeData) {
         reposOfOneAccount.push(repo);
       }
     }
-    await localforage.setItem(account.name+"-repos",JSON.stringify(reposOfOneAccount));
+    await localforage.setItem(account.name+"--repos",JSON.stringify(reposOfOneAccount));
   }
 
   for (let index = 0; index < repos.length; index++) {
