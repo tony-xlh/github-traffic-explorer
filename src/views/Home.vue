@@ -241,10 +241,10 @@ const handleMenuClick: MenuProps['onClick'] = e => {
         let file = files[0];
         console.log(file)
         let fileReader = new FileReader();
-        fileReader.onload = function(e){
+        fileReader.onload = async function(e){
           if (e.target) {
             status.value = "Importing...";
-            importData(JSON.parse(e.target.result as string) as ExchangeData);
+            await importData(JSON.parse(e.target.result as string) as ExchangeData);
             status.value = "";
             location.reload();
           }

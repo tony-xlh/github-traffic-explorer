@@ -67,7 +67,7 @@ export async function exportData() {
 
 export async function importData(data:ExchangeData) {
   const accountsManager = new AccountsManager();
-  accountsManager.setItems(data.accounts);
+  await accountsManager.setItems(data.accounts);
   const repos:Repo[] = data.repos;
   const traffics:RepoTraffic[] = data.traffics;
 
@@ -82,6 +82,7 @@ export async function importData(data:ExchangeData) {
     }
     await localforage.setItem(account.name+"--repos",JSON.stringify(reposOfOneAccount));
   }
+  //console.log(repos);
 
   for (let index = 0; index < repos.length; index++) {
     const repo = repos[index];
