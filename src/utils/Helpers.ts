@@ -53,7 +53,10 @@ export async function exportData() {
     repos:repos,
     traffics:traffics
   };
-  downloadAsTxt(JSON.stringify(data),"out.txt");
+  let date = new Date();
+  
+  let filename = date.getFullYear() + (date.getMonth()+1).toString().padStart(2,"0") + date.getDate().toString().padStart(2,"0") + ".txt";
+  downloadAsTxt(JSON.stringify(data),filename);
 }
 
 export async function importData(data:ExchangeData) {
