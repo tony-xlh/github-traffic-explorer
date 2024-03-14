@@ -254,7 +254,7 @@ const handleMenuClick: MenuProps['onClick'] = e => {
     }
     fileInput.click();
   }else{
-    window.location.pathname = "/more";
+    window.location.pathname = "/github-traffic-explorer/more";
   }
 };
 

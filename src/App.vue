@@ -16,6 +16,9 @@ window.addEventListener('hashchange', () => {
 })
 const currentView = computed(() => {
   let path:string = currentPath.value;
+  path = path.replace("github-traffic-explorer","");
+  path = path.replace("//","/");
+  console.log(path)
   let view = (routes as any)[path];
   return view;
 })
