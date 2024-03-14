@@ -70,7 +70,19 @@ export async function importData(data:ExchangeData) {
   accountsManager.setItems(data.accounts);
   const repos:Repo[] = data.repos;
   const traffics:RepoTraffic[] = data.traffics;
-  await localforage.setItem("repos",JSON.stringify(repos));
+  
+  for (let index = 0; index < data.accounts.length; index++) {
+    const account = data.accounts[index];
+    const reposOfOneAccount = [];
+    for (let j = 0; j < repos.length; j++) {
+      const repo = repos[j]; 
+      if (repo.owner == account.name) {
+        reposOfOneAccount.push(repo);
+      }
+    }
+    await localforage.setItem(account.name+"-repos",JSON.stringify(reposOfOneAccount));
+  }
+
   for (let index = 0; index < repos.length; index++) {
     const repo = repos[index];
     const traffic = traffics[index];
